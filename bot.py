@@ -4,7 +4,25 @@ from telegram import BotCommand
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from cards import CARDS
+import json
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
+def get_db():
+    return psycopg2.connect(os.getenv("DATABASE_URL"), cursor_factory=RealDictCursor)
+
+def init_db():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            user_id BIGINT PRIMARY KEY,
+            collection JSONB DEFAULT '[]'::jsonb
+        )
+    """)
+    conn.commit()
+    cur.close()
+    conn.close()
 import os
 TOKEN = os.getenv("BOT_TOKEN")
 
@@ -65,6 +83,7 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("cardsearch", cardsearch))
     print("Bleach Cards запущен!")
+    init_db()
     app.run_polling()
 
 if __name__ == "__main__":
