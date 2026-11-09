@@ -36,16 +36,31 @@ async def cardsearch(update: Update, context: ContextTypes.DEFAULT_TYPE):
         photo=card["image"],
         caption=text)
     context.user_data["last_card"] = now
+    if "collection" not in context.user_data:
+        context.user_data["collection"] = []
+    context.user_data["collection"].append(card)  
+async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    collection = context.user_data.get("collection", [])
+    total_cards = len(collection)
+    total_points = sum(card.get("points", 0) for card in collection)
 
+    text = (
+        f"👤 Твой профиль\n\n"
+        f"🃏 Карточек: {total_cards}\n"
+        f"⭐️ Общая сумма очков: {total_points}"
+    )
+    await update.message.reply_text(text)
 async def post_init(application):
     await application.bot.set_my_commands([
         BotCommand("start", "Запуск бота"),
         BotCommand("cardsearch", "Получить карточку"),
+        BotCommand("profile", "Мой профиль"),
     ])
 
 def main():
     app = Application.builder().token(TOKEN).post_init(post_init).build()
 
+    app.add_handler(CommandHandler("profile", profile))
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("cardsearch", cardsearch))
     print("Bleach Cards запущен!")
