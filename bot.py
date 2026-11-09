@@ -47,7 +47,7 @@ def main():
     app = Application.builder().token(TOKEN).post_init(post_init).build()
 
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("cards", cardsearch))
+    app.add_handler(CommandHandler("cardsearch", cardsearch))
     print("Bleach Cards запущен!")
     app.run_polling()
 
