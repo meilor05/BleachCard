@@ -13,38 +13,45 @@ def get_db():
 
 def init_db():
     conn = get_db()
-    cur = conn.cursor()
-    cur.execute("""
+    try:
+        cur = conn.cursor()
+        cur.execute("""
             CREATE TABLE IF NOT EXISTS users (
-            user_id BIGINT PRIMARY KEY,
-            collection JSONB DEFAULT '[]'::jsonb
-        )
-    """)
-    conn.commit()
-    cur.close()
-    conn.close()
-    def save_collection(user_id, collection):
-        conn = get_db()
-    cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO users (user_id, collection)
-        VALUES (%s, %s)
-        ON CONFLICT (user_id) DO UPDATE SET collection = %s
-    """, (user_id, json.dumps(collection), json.dumps(collection)))
-    conn.commit()
-    cur.close()
-    conn.close()
+                user_id BIGINT PRIMARY KEY,
+                collection JSONB DEFAULT '[]'::jsonb
+            )
+        """)
+        conn.commit()
+        cur.close()
+    finally:
+        conn.close()
+
+def save_collection(user_id, collection):
+    conn = get_db()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO users (user_id, collection)
+            VALUES (%s, %s)
+            ON CONFLICT (user_id) DO UPDATE SET collection = %s
+        """, (user_id, json.dumps(collection), json.dumps(collection)))
+        conn.commit()
+        cur.close()
+    finally:
+        conn.close()
 
 def load_collection(user_id):
     conn = get_db()
-    cur = conn.cursor()
-    cur.execute("SELECT collection FROM users WHERE user_id = %s", (user_id,))
-    row = cur.fetchone()
-    cur.close()
-    conn.close()
-    if row:
-        return row["collection"]
-    return []
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT collection FROM users WHERE user_id = %s", (user_id,))
+        row = cur.fetchone()
+        cur.close()
+        if row:
+            return row["collection"]
+        return []
+    finally:
+        conn.close()
 import os
 TOKEN = os.getenv("BOT_TOKEN")
 
