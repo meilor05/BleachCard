@@ -15,7 +15,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 async def cardsearch(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    card = random.choice(CARDS)
+    weights = [c["chance"] for c in CARDS]
+    card = random.choices(CARDS, weights=weights, k=1)[0]
     now = time.time()
     last_card = context.user_data.get("last_card", 0)
 
