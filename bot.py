@@ -15,7 +15,7 @@ def init_db():
     conn = get_db()
     cur = conn.cursor()
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS users (
+            CREATE TABLE IF NOT EXISTS users (
             user_id BIGINT PRIMARY KEY,
             collection JSONB DEFAULT '[]'::jsonb
         )
@@ -23,6 +23,28 @@ def init_db():
     conn.commit()
     cur.close()
     conn.close()
+    def save_collection(user_id, collection):
+        conn = get_db()
+    cur = conn.cursor()
+    cur.execute("""
+        INSERT INTO users (user_id, collection)
+        VALUES (%s, %s)
+        ON CONFLICT (user_id) DO UPDATE SET collection = %s
+    """, (user_id, json.dumps(collection), json.dumps(collection)))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+def load_collection(user_id):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT collection FROM users WHERE user_id = %s", (user_id,))
+    row = cur.fetchone()
+    cur.close()
+    conn.close()
+    if row:
+        return row["collection"]
+    return []
 import os
 TOKEN = os.getenv("BOT_TOKEN")
 
@@ -57,9 +79,10 @@ async def cardsearch(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["last_card"] = now
     if "collection" not in context.user_data:
         context.user_data["collection"] = []
-    context.user_data["collection"].append(card)  
+    context.user_data["collection"].append(card)
+    context.user_data["collection"].append(card)
 async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    collection = context.user_data.get("collection", [])
+    collection = load_collection(update.effective_user.id)
     total_cards = len(collection)
     total_points = sum(card.get("points", 0) for card in collection)
 
