@@ -1,8 +1,8 @@
 import time
 import random
+from telegram import BotCommand
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
-
 from cards import CARDS
 
 import os
@@ -36,9 +36,16 @@ async def cardsearch(update: Update, context: ContextTypes.DEFAULT_TYPE):
         photo=card["image"],
         caption=text)
     context.user_data["last_card"] = now
-   
+
+async def post_init(application):
+    await application.bot.set_my_commands([
+        BotCommand("start", "Запуск бота"),
+        BotCommand("cardsearch", "Получить карточку"),
+        BotCommand("cards", "Получить карточку"),
+    ])
+
 def main():
-    app = Application.builder().token(TOKEN).build()
+    app = Application.builder().token(TOKEN).post_init(post_init).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("cardsearch", cardsearch))
