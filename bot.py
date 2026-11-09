@@ -41,14 +41,12 @@ async def post_init(application):
     await application.bot.set_my_commands([
         BotCommand("start", "Запуск бота"),
         BotCommand("cardsearch", "Получить карточку"),
-        BotCommand("cards", "Получить карточку"),
     ])
 
 def main():
     app = Application.builder().token(TOKEN).post_init(post_init).build()
 
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("cardsearch", cardsearch))
     app.add_handler(CommandHandler("cards", cardsearch))
     print("Bleach Cards запущен!")
     app.run_polling()
