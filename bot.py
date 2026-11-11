@@ -84,11 +84,11 @@ async def cardsearch(update: Update, context: ContextTypes.DEFAULT_TYPE):
         photo=card["image"],
         caption=text)
     context.user_data["last_card"] = now
-    if "collection" not in context.user_data:
-        context.user_data["collection"] = []
-    context.user_data["collection"].append(card)
     user_id = update.effective_user.id
-    save_collection(user_id, context.user_data["collection"])
+    collection = load_collection(user_id)
+    collection.append(card)
+    context.user_data["collection"] = collection
+    save_collection(user_id, collection)
 async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
     collection = load_collection(update.effective_user.id)
     total_cards = len(collection)
