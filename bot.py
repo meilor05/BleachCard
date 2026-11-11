@@ -52,6 +52,33 @@ def load_collection(user_id):
         return []
     finally:
         conn.close()
+def get_top_players(limit=10):
+    conn = get_db()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT user_id, collection
+            FROM users
+            ORDER BY (SELECT SUM((card->>'points')::int) FROM jsonb_array_elements(collection) AS card) DESC
+            LIMIT %s
+        """, (limit,))
+        rows = cur.fetchall()
+        cur.close()
+        return rows
+    finally:
+        conn.close()
+async def top(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    players = get_top_players(10)
+    if not players:
+        await update.message.reply_text("Пока нет игроков в топе.")
+        return
+    text = "🏆 Топ игроков:\n\n"
+    for i, player in enumerate(players, 1):
+        collection = player["collection"]
+        total_points = sum(card.get("points", 0) for card in collection)
+        total_cards = len(collection)
+        text += f"{i}. ID {player['user_id']} — {total_points} очков ({total_cards} карт)\n"
+    await update.message.reply_text(text)    
 import os
 TOKEN = os.getenv("BOT_TOKEN")
 
@@ -105,12 +132,14 @@ async def post_init(application):
         BotCommand("start", "Запуск бота"),
         BotCommand("cardsearch", "Получить карточку"),
         BotCommand("profile", "Мой профиль"),
+        BotCommand("top", "Топ игроков"),
     ])
 
 def main():
     app = Application.builder().token(TOKEN).post_init(post_init).build()
 
     app.add_handler(CommandHandler("profile", profile))
+    app.add_handler(CommandHandler("top", top))
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("cardsearch", cardsearch))
     print("Bleach Cards запущен!")
