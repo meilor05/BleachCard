@@ -80,7 +80,7 @@ def get_top_players(limit=10):
     try:
         cur = conn.cursor()
         cur.execute("""
-            SELECT user_id, collection
+            SELECT user_id, name, collection
             FROM users
             ORDER BY (SELECT SUM((card->>'points')::int) FROM jsonb_array_elements(collection) AS card) DESC
             LIMIT %s
@@ -99,8 +99,8 @@ async def top(update: Update, context: ContextTypes.DEFAULT_TYPE):
     for i, player in enumerate(players, 1):
         collection = player["collection"]
         total_points = sum(card.get("points", 0) for card in collection)
-        total_cards = len(collection)
-        text += f"{i}. ID {player['user_id']} — {total_points} очков ({total_cards} карт)\n"
+    display_name = player["name"] or f"ID {player['user_id']}"
+    text += f"{i}. {display_name} — {total_points} очков ({total_cards} карт)\n"
     await update.message.reply_text(text)    
 import os
 TOKEN = os.getenv("BOT_TOKEN")
