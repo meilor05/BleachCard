@@ -99,6 +99,7 @@ async def top(update: Update, context: ContextTypes.DEFAULT_TYPE):
     for i, player in enumerate(players, 1):
         collection = player["collection"]
         total_points = sum(card.get("points", 0) for card in collection)
+        total_cards = len(collection)
     display_name = player["name"] or f"ID {player['user_id']}"
     text += f"{i}. {display_name} — {total_points} очков ({total_cards} карт)\n"
     await update.message.reply_text(text)    
