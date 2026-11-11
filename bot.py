@@ -21,11 +21,13 @@ def init_db():
                 collection JSONB DEFAULT '[]'::jsonb
             )
         """)
+        cur.execute("""
+            ALTER TABLE users ADD COLUMN IF NOT EXISTS name TEXT DEFAULT NULL
+        """)
         conn.commit()
         cur.close()
     finally:
         conn.close()
-
 def save_collection(user_id, collection):
     conn = get_db()
     try:
@@ -52,6 +54,27 @@ def load_collection(user_id):
         return []
     finally:
         conn.close()
+def set_name(user_id, name):
+    conn = get_db()
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO users (user_id, name)
+            VALUES (%s, %s)
+            ON CONFLICT (user_id) DO UPDATE SET name = %s
+        """, (user_id, name, name))
+        conn.commit()
+        cur.close()
+    finally:
+        conn.close()
+async def setname(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not context.args:
+        await update.message.reply_text("Напиши имя после команды. Пример: /name Ичиго")
+        return
+    name = " ".join(context.args)
+    user_id = update.effective_user.id
+    set_name(user_id, name)
+    await update.message.reply_text(f"Имя установлено: {name}")
 def get_top_players(limit=10):
     conn = get_db()
     try:
@@ -133,11 +156,12 @@ async def post_init(application):
         BotCommand("cardsearch", "Получить карточку"),
         BotCommand("profile", "Мой профиль"),
         BotCommand("top", "Топ игроков"),
+        BotCommand("name", "Установить имя"),
     ])
 
 def main():
     app = Application.builder().token(TOKEN).post_init(post_init).build()
-
+    app.add_handler(CommandHandler("name", setname))
     app.add_handler(CommandHandler("profile", profile))
     app.add_handler(CommandHandler("top", top))
     app.add_handler(CommandHandler("start", start))
