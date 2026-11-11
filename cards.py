@@ -12,7 +12,7 @@ CARDS = [
         "name": "Успех! Карточка «Миназуки»",
         "rarity": "Редкая",
         "points": 2000,
-        "chance": 70,
+        "chance": 40,
         "image": "https://imgpile.com/ru/m/pmzf59d",
     },
     {
@@ -20,7 +20,7 @@ CARDS = [
         "name": "Успех! Карточка «Молодой Укитаке»",
         "rarity": "Легендарная",
         "points": 15000,
-        "chance": 20,
+        "chance": 10,
         "image": "https://imgpile.com/ru/m/ipzK3bY",
     },
     {
@@ -28,7 +28,7 @@ CARDS = [
         "name": "Успех! Карточка «Язык от Маюри»",
         "rarity": "Легендарная",
         "points": 20000,
-        "chance": 20,
+        "chance": 10,
         "image": "https://imgpile.com/ru/m/Neg0gDv",
     },
     {
@@ -36,7 +36,7 @@ CARDS = [
         "name": "Успех! Карточка «Солнечный Маюри»",
         "rarity": "Легендарная",
         "points": 30000,
-        "chance": 20,
+        "chance": 10,
         "image": "https://imgpile.com/ru/m/plwAgp8",
     },
     {
@@ -44,7 +44,7 @@ CARDS = [
         "name": "Успех! Карточка «Чад в наушниках»",
         "rarity": "Редкая",
         "points": 3000,
-        "chance": 70,
+        "chance": 40,
         "image": "https://ссылка-на-картинку",
     },
     {
@@ -52,7 +52,7 @@ CARDS = [
         "name": "Успех! Карточка «Малыш Хисаги»",
         "rarity": "Редкая",
         "points": 4000,
-        "chance": 60,
+        "chance": 40,
         "image": "https://imgpile.com/ru/m/fuFNaJo",
     },
     {
@@ -60,7 +60,7 @@ CARDS = [
         "name": "Успех! Карточка «Банкай Рукии»",
         "rarity": "Мифическая",
         "points": 100000,
-        "chance": 1,
+        "chance": 0.5,
         "image": "https://imgpile.com/ru/m/7qxzYtM",
     },
     {
@@ -76,7 +76,7 @@ CARDS = [
         "name": "Успех! Карточка «Банкай Урахары»",
         "rarity": "Мифическая",
         "points": 150000,
-        "chance": 1,
+        "chance": 0.5,
         "image": "https://imgpile.com/ru/m/T037Lqt",
     },
     {
@@ -84,7 +84,7 @@ CARDS = [
         "name": "Успех! Карточка «Плачущий Кон»",
         "rarity": "Редкая",
         "points": 10000,
-        "chance": 50,
+        "chance": 40,
         "image": "https://imgpile.com/ru/m/WVLYVDjу",
     },
     {
@@ -92,7 +92,7 @@ CARDS = [
         "name": "Успех! Карточка «Гача Кон»",
         "rarity": "Легендарная",
         "points": 50000,
-        "chance": 50,
+        "chance": 10,
         "image": "https://imgpile.com/ru/m/UkqF1IA",
     },
     {
