@@ -92,8 +92,7 @@ def get_top_players(limit=10):
             SELECT user_id, name, collection
             FROM users
             WHERE collection IS NOT NULL
-            LIMIT %s
-        """, (limit,))
+            """)
         rows = cur.fetchall()
         cur.close()
         return rows
