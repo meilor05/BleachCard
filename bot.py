@@ -105,7 +105,13 @@ async def top(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Чтобы получать карточки, подпишись на канал:\n" + CHANNEL_ID 
         return
     players = get_top_players(10)
-    players = sorted(players, key=lambda p: sum(c.get("points", 0) for c in p["collection"]), reverse=True)[:10]
+    def get_points(p):
+        coll = p["collection"]
+        if isinstance(coll, str):
+            import json
+            coll = json.loads(coll)
+        return sum(c.get("points", 0) for c in coll) if coll else 0
+    players = sorted(players, key=get_points, reverse=True)[:10]
     if not players:
         await update.message.reply_text("Пока нет игроков в топе.")
         return
