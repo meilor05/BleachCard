@@ -67,6 +67,15 @@ def set_name(user_id, name):
         cur.close()
     finally:
         conn.close()
+CHANNEL_ID = "@bleachcardsnews"
+
+async def check_subscription(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    try:
+        member = await context.bot.get_chat_member(CHANNEL_ID, user_id)
+        return member.status in ["member", "administrator", "creator"]
+    except:
+        return False
 async def setname(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
         await update.message.reply_text("Напиши имя после команды. Пример: /name Ичиго")
@@ -82,7 +91,11 @@ def get_top_players(limit=10):
         cur.execute("""
             SELECT user_id, name, collection
             FROM users
-            ORDER BY (SELECT SUM((card->>'points')::int) FROM jsonb_array_elements(collection) AS card) DESC
+            WHERE collection IS NOT NULL AND jsonb_array_length(collection) > 0
+            ORDER BY (
+                SELECT COALESCE(SUM((card->>'points')::int), 0)
+                FROM jsonb_array_elements(collection) AS card
+            ) DESC
             LIMIT %s
         """, (limit,))
         rows = cur.fetchall()
@@ -91,6 +104,11 @@ def get_top_players(limit=10):
     finally:
         conn.close()
 async def top(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not await check_subscription(update, context):
+        await update.message.reply_text(
+            "Чтобы получать карточки, подпишись на канал:\n" + CHANNEL_ID
+        )
+        return
     players = get_top_players(10)
     if not players:
         await update.message.reply_text("Пока нет игроков в топе.")
@@ -113,6 +131,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 async def cardsearch(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not await check_subscription(update, context):
+        await update.message.reply_text(
+            "Чтобы получать карточки, подпишись на канал:\n" + CHANNEL_ID
+        )
+        return
     weights = [c["chance"] for c in CARDS]
     card = random.choices(CARDS, weights=weights, k=1)[0]
     now = time.time()
@@ -141,6 +164,11 @@ async def cardsearch(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data["collection"] = collection
     save_collection(user_id, collection)
 async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not await check_subscription(update, context):
+        await update.message.reply_text(
+            "Чтобы получать карточки, подпишись на канал:\n" + CHANNEL_ID
+        )
+        return
     collection = load_collection(update.effective_user.id)
     total_cards = len(collection)
     total_points = sum(card.get("points", 0) for card in collection)
