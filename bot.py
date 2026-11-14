@@ -91,11 +91,7 @@ def get_top_players(limit=10):
         cur.execute("""
             SELECT user_id, name, collection
             FROM users
-            WHERE collection IS NOT NULL AND jsonb_array_length(collection) > 0
-            ORDER BY (
-                SELECT COALESCE(SUM((card->>'points')::int), 0)
-                FROM jsonb_array_elements(collection) AS card
-            ) DESC
+            WHERE collection IS NOT NULL
             LIMIT %s
         """, (limit,))
         rows = cur.fetchall()
@@ -105,11 +101,11 @@ def get_top_players(limit=10):
         conn.close()
 async def top(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await check_subscription(update, context):
-        await update.message.reply_text(
-            "Чтобы получать карточки, подпишись на канал:\n" + CHANNEL_ID
-        )
+        await update.message.reply_text
+        "Чтобы получать карточки, подпишись на канал:\n" + CHANNEL_ID 
         return
     players = get_top_players(10)
+    players = sorted(players, key=lambda p: sum(c.get("points", 0) for c in p["collection"]), reverse=True)[:10]
     if not players:
         await update.message.reply_text("Пока нет игроков в топе.")
         return
