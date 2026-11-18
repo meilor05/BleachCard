@@ -100,32 +100,44 @@ def get_top_players(limit=10):
         conn.close()
 async def top(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await check_subscription(update, context):
-        await update.message.reply_text
-        "Чтобы получать карточки, подпишись на канал:\n" + CHANNEL_ID 
+        await update.message.reply_text(
+            "Чтобы получать карточки, подпишись на канал:\n" + CHANNEL_ID
+        )
         return
+
     players = get_top_players(10)
-    print("🏆Топ коллекционеров:", len(players))
-    for p in players:
-        coll = p["collection"]
-        print(p["user_id"], "тип:", type(coll))
+
     def get_points(p):
-        coll = p["collection"]
-        if isinstance(coll, str):
-            import json
-            coll = json.loads(coll)
-        return sum(c.get("points", 0) for c in coll) if coll else 0
+        try:
+            coll = p["collection"]
+            if isinstance(coll, str):
+                import json
+                coll = json.loads(coll)
+            return sum(c.get("points", 0) for c in coll) if coll else 0
+        except:
+            return 0
+
     players = sorted(players, key=get_points, reverse=True)[:10]
+
     if not players:
         await update.message.reply_text("Пока нет игроков в топе.")
         return
+
     text = "🏆 Топ игроков:\n\n"
     for i, player in enumerate(players, 1):
-        collection = player["collection"]
-        total_points = sum(card.get("points", 0) for card in collection)
-        total_cards = len(collection)
-    display_name = player["name"] or f"ID {player['user_id']}"
-    text += f"{i}. {display_name} — {total_points} очков ({total_cards} карт)\n"
-    await update.message.reply_text(text)    
+        try:
+            collection = player["collection"]
+            if isinstance(collection, str):
+                import json
+                collection = json.loads(collection)
+            total_points = sum(card.get("points", 0) for card in collection)
+            total_cards = len(collection)
+        except:
+            total_points = 0
+            total_cards = 0
+        display_name = player["name"] or f"ID {player['user_id']}"
+        text += f"{i}. {display_name} — {total_points} очков ({total_cards} карт)\n"
+    await update.message.reply_text(text)   
 import os
 TOKEN = os.getenv("BOT_TOKEN")
 
