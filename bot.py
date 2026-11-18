@@ -104,6 +104,10 @@ async def top(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Чтобы получать карточки, подпишись на канал:\n" + CHANNEL_ID 
         return
     players = get_top_players(10)
+    print("🏆Топ коллекционеров:", len(players))
+    for p in players:
+        coll = p["collection"]
+        print(p["user_id"], "тип:", type(coll))
     def get_points(p):
         coll = p["collection"]
         if isinstance(coll, str):
