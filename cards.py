@@ -141,7 +141,7 @@ CARDS = [
         "rarity": "Редкая",
         "points": 7500,
         "chance": 50,
-        "image": "https://imgpile.com/ru/m/HrWqGEc",
+        "image": "https://imgpile.com/ru/m/VISRJVP",
     },
     {
         "id": 19,
@@ -223,5 +223,36 @@ CARDS = [
         "chance": 0.5,
         "image":"https://imgpile.com/ru/m/IFzF1an",
     },
-    
+    {
+        "id": 27,
+        "name": "Успех! Карточка «Прощание с Зангецу»",
+        "rarity": "Мифическая",
+        "points": 600000,
+        "chance": 0.5,
+        "image":"https://imgpile.com/ru/m/8AyhpST",
+    },
+    {
+        "id": 28,
+        "name": "Успех! Карточка «Гин стает капитаном»",
+        "rarity": "Редкая",
+        "points": 9000,
+        "chance": 40,
+        "image":"https://imgpile.com/ru/m/A2PsIdG",
+    },
+    {
+        "id": 29,
+        "name": "Успех! Карточка «Банкай Кьераку»",
+        "rarity": "Мифическая",
+        "points": 200000,
+        "chance": 40,
+        "image":"",
+    },
+    {
+        "id": 30,
+        "name": "Успех! Карточка «Базз Би»",
+        "rarity": "Редкая",
+        "points": 9000,
+        "chance": 40,
+        "image":"https://imgpile.com/ru/m/EH3sZDu",
+    },
 ]
