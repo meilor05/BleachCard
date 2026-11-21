@@ -255,4 +255,28 @@ CARDS = [
         "chance": 40,
         "image":"https://imgpile.com/ru/m/EH3sZDu",
     },
+    {
+        "id": 31,
+        "name": "Успех! Карточка «Шикай Зараки»",
+        "rarity": "Легендарная",
+        "points": 90000,
+        "chance": 20,
+        "image":"https://imgpile.com/ru/m/xF2mcdy",
+    },
+    {
+        "id": 32,
+        "name": "Успех! Карточка «Король душ»",
+        "rarity": "Мифическая",
+        "points": 500000,
+        "chance": 1,
+        "image":"https://imgpile.com/ru/m/4x2SBI0",
+    },
+    {
+        "id": 33,
+        "name": "Успех! Карточка «Убегающий Аскин»",
+        "rarity": "Редкая",
+        "points": 9000,
+        "chance": 40,
+        "image":"https://imgpile.com/ru/m/dz8nR5X"
+    },
 ]
